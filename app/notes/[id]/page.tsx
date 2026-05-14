@@ -1,12 +1,13 @@
 import { fetchNoteById } from "@/lib/api/notes";
 
-export default async function NotePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const note = await fetchNoteById(id);
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function NotePage({ params }: Props) {
+  const note = await fetchNoteById(params.id);
 
   return (
     <div>
@@ -15,4 +16,19 @@ export default async function NotePage({
       <p>{note.tag}</p>
     </div>
   );
+}
+
+export async function generateMetadata({ params }: Props) {
+  const note = await fetchNoteById(params.id);
+
+  return {
+    title: note.title,
+    description: note.content,
+    openGraph: {
+      title: note.title,
+      description: note.content,
+      url: `/notes/${params.id}`,
+      images: ["https://ac.goit.global/fullstack/react/notehub-og-meta.jpg"],
+    },
+  };
 }

@@ -6,13 +6,31 @@ import {
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
 
-export default async function NotesPage({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const { slug } = await params;
-  const tag = slug[0] === "all" ? undefined : slug[0];
+type Props = {
+  params: {
+    slug?: string[];
+  };
+};
+
+// ✅ SEO
+export async function generateMetadata({ params }: Props) {
+  const filter = params.slug?.[0] || "All";
+
+  return {
+    title: `Notes: ${filter}`,
+    description: `Notes filtered by ${filter}`,
+    openGraph: {
+      title: `Notes: ${filter}`,
+      description: `Notes filtered by ${filter}`,
+      url: `/notes/filter/${params.slug?.join("/") || "All"}`,
+      images: ["https://ac.goit.global/fullstack/react/notehub-og-meta.jpg"],
+    },
+  };
+}
+
+// ✅ СТОРІНКА
+export default async function NotesPage({ params }: Props) {
+  const tag = params.slug?.[0] === "All" ? undefined : params.slug?.[0];
 
   const queryClient = new QueryClient();
 
