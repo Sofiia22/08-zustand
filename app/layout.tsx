@@ -5,7 +5,7 @@ import Footer from "@/components/Footer/Footer";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import "./globals.css";
 
-const SITE_URL = "08-zustand-ten-sigma.vercel.app";
+const SITE_URL = "https://08-zustand-ten-sigma.vercel.app";
 
 const roboto = Roboto({
   subsets: ["latin", "cyrillic"],
