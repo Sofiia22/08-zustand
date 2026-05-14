@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   HydrationBoundary,
   QueryClient,
@@ -6,15 +7,17 @@ import {
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
 
+const SITE_URL = "08-zustand-ten-sigma.vercel.app";
+
 type Props = {
-  params: {
+  params: Promise<{
     slug?: string[];
-  };
+  }>;
 };
 
-// ✅ SEO
-export async function generateMetadata({ params }: Props) {
-  const filter = params.slug?.[0] || "All";
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const filter = slug?.[0] || "All";
 
   return {
     title: `Notes: ${filter}`,
@@ -22,15 +25,20 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title: `Notes: ${filter}`,
       description: `Notes filtered by ${filter}`,
-      url: `/notes/filter/${params.slug?.join("/") || "All"}`,
-      images: ["https://ac.goit.global/fullstack/react/notehub-og-meta.jpg"],
+      url: `${SITE_URL}/notes/filter/${slug?.join("/") || "all"}`,
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        },
+      ],
     },
   };
 }
 
-// ✅ СТОРІНКА
 export default async function NotesPage({ params }: Props) {
-  const tag = params.slug?.[0] === "All" ? undefined : params.slug?.[0];
+  const { slug } = await params;
+  const tag =
+    slug?.[0] === "All" || slug?.[0] === "all" ? undefined : slug?.[0];
 
   const queryClient = new QueryClient();
 
